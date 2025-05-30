@@ -6,6 +6,8 @@
     </head>
     <body>
         <h1 id="vending-machine">自動販売機システム</h1>
+        <p id="money">所持金: 1500円</p> 
+        <p id="message"></p>
         <table id="item_area" border="1"></table>
         <script>
             // 商品一覧を記録する連想配列の配列
@@ -19,7 +21,9 @@
                 { id: 7, name: "コーヒー", price: 170, stock: 8 },
                 { id: 8, name: "紅茶", price: 140, stock: 6 }
             ]
-
+            let yen = 1500;
+            const moneyDisplay = document.getElementById("money");
+            const message = document.getElementById("message");
             // 商品用のクラス定義
             class Item {
                 static number = 1;
@@ -37,24 +41,29 @@
 
                     // 配列の内容を項目毎に出力
                     // 課題4-1. ここにコードを書く
-                    for (let i=0; i<items.length; i++) {
+                    for (let i=0; i<item_list.length; i++) {
                         console.log(`商品番号: ${item_list[i].id}, 商品名: ${item_list[i].name}, 金額: ${item_list[i].price} 在庫数: ${item_list[i].stock}`);
                     }
                     console.log(""); // 空行の出力
                 }
                 
                 // 商品購入の関数
-                buyItem() {          
-                    if (this.stock >= 1) { 
-                        console.log("商品番号: "+this.id+", 商品名: "+this.name+"を購入します。");
-                        // 課題4-2. ここにコードを書く
-                        // 購入による商品の在庫削減処理
-                        this.stock--;
-                        // 課題4-3. ここにコードを書く
-                        // 在庫用のエレメントを抽出し、HTML内の個数を更新
-                        document.getElementById("stock" + this.id).textContent = this.stock;
-                        console.log("残りは"+this.stock+"個です");
-                    } else console.log(this.name+"は商品の在庫がないため購入できません。");
+                buyItem() {
+                    if (yen >= this.price){       
+                        if (this.stock >= 1) {
+                            console.log("商品番号: "+this.id+", 商品名: "+this.name+"を購入します。");
+                            // 課題4-2. ここにコードを書く
+                            // 購入による商品の在庫削減処理
+                            this.stock--;
+                            yen -=this.price;
+                            // 課題4-3. ここにコードを書く
+                            // 在庫用のエレメントを抽出し、HTML内の個数を更新
+                            document.getElementById("stock" + this.id).textContent = this.stock;
+                            console.log("残りは"+this.stock+"個です");
+                            moneyDisplay.textContent = `所持金: ${yen}円`;
+                            message.textContent = `${this.name}を購入しました。残金は${yen}円です。`;
+                        } else console.log(this.name+"は商品の在庫がないため購入できません。");
+                    } else console.log("所持金が足りません")
                 }
             } // End of Item class
 
@@ -83,7 +92,7 @@
                     <td id="stock${item.id}">${item.stock}</td>
                     <td><button id="button${item.id}">購入</button></td>
                 </tr>`;
-            }   
+            }                
             // クリックイベント時の購入処理の設定
             for (let i=0; i<item_list.length; i++) {
                 // 課題4-3. ここにコードを書く
